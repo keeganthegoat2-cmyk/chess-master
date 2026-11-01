@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Chess Master</title>
+<style>
+:root {
+ --site-primary:#b98b52; --site-secondary:#182536; --site-background:#0e1724;
+ --site-on-primary:#17130e; --site-on-secondary:#f5f0e7; --site-on-background:#f5f0e7;
+ --site-font-body:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+ --site-font-heading:Georgia,"Times New Roman",serif;
+ --site-heading-scale:1; --site-spacing-scale:1; --site-radius-scale:1; --site-decoration-opacity:1;
+ color-scheme:light dark;
+}
+*{box-sizing:border-box} body{margin:0;font-family:var(--site-font-body);background:light-dark(#f1eee8,#0e1724);color:light-dark(#20252b,#f5f0e7)}
+#app{min-height:100vh;width:100%;background-color:light-dark(#f1eee8,#0e1724);color:light-dark(#20252b,#f5f0e7);padding:calc(26px * var(--site-spacing-scale));}
+.shell{max-width:1120px;margin:0 auto}.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:26px}.brand{display:flex;align-items:center;gap:12px;font-weight:800;letter-spacing:.13em}.brand-mark{width:42px;height:42px;border-radius:14px;background:var(--site-primary);color:var(--site-on-primary);display:grid;place-items:center;font-size:27px;box-shadow:0 8px 22px #0003}.eyebrow{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:light-dark(#77716a,#b5aa98)}
+button,select{font:inherit}button{cursor:pointer;border:0;border-radius:12px;padding:12px 16px;font-weight:700;transition:transform .15s,filter .15s}button:hover{filter:brightness(1.08);transform:translateY(-1px)}button:focus-visible,select:focus-visible{outline:3px solid var(--site-primary);outline-offset:3px}.primary{background:var(--site-primary);color:var(--site-on-primary)}.secondary{background:var(--site-secondary);color:var(--site-on-secondary)}.ghost{background:transparent;color:inherit;border:1px solid light-dark(#d3ccc0,#354255)}.hero{display:grid;grid-template-columns:1.05fr .95fr;gap:24px;align-items:stretch}.panel{background:light-dark(#fff,#172333);border:1px solid light-dark(#e1dbd1,#2a394c);border-radius:calc(24px * var(--site-radius-scale));padding:clamp(22px,4vw,42px);box-shadow:0 18px 55px #00000012}.hero h1{font-family:var(--site-font-heading);font-size:calc(clamp(44px,6vw,76px) * var(--site-heading-scale));line-height:.98;margin:14px 0 18px;letter-spacing:-.045em}.hero p{color:light-dark(#66615a,#b7c0ca);line-height:1.7;max-width:490px}.hero-actions{display:flex;flex-wrap:wrap;gap:10px;margin-top:28px}.hero-art{min-height:350px;position:relative;overflow:hidden;background:var(--site-secondary);color:#f5f0e7;display:flex;align-items:center;justify-content:center}.hero-art:before,.hero-art:after{content:"";position:absolute;border:1px solid #ffffff20;border-radius:50%;width:360px;height:360px;opacity:var(--site-decoration-opacity)}.hero-art:after{width:480px;height:480px}.king-art{font-size:clamp(130px,22vw,230px);color:var(--site-primary);text-shadow:0 18px 30px #0008;z-index:1}.art-caption{position:absolute;bottom:24px;left:26px;right:26px;display:flex;justify-content:space-between;color:#c7c2b9;font-size:12px;letter-spacing:.12em;text-transform:uppercase}.setup{margin-top:24px;display:grid;grid-template-columns:1fr 1fr;gap:18px}.setup-card{padding:22px;border-radius:18px;background:light-dark(#fff,#172333);border:1px solid light-dark(#e1dbd1,#2a394c)}.setup-card h3{margin:0 0 8px;font-family:var(--site-font-heading);font-size:24px}.setup-card p{color:light-dark(#716b63,#aeb8c5);font-size:14px;line-height:1.6}.choice-row{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}.choice{background:transparent;border:1px solid light-dark(#d8d1c7,#3a4a5e);color:inherit;padding:9px 13px}.choice.active{background:var(--site-primary);border-color:var(--site-primary);color:var(--site-on-primary)}
+.game-layout{display:grid;grid-template-columns:minmax(0,1.25fr) minmax(270px,.75fr);gap:20px;align-items:start}.game-panel{padding:clamp(12px,2vw,22px)}.playerbar{display:flex;justify-content:space-between;align-items:center;padding:10px 4px;color:light-dark(#58534d,#d0d5dc);font-size:13px}.player-name{font-weight:800;color:inherit}.board{display:grid;grid-template-columns:repeat(8,1fr);width:100%;aspect-ratio:1;overflow:hidden;border-radius:10px;border:5px solid #253345;box-shadow:0 16px 36px #0003}.square{position:relative;display:grid;place-items:center;aspect-ratio:1;border:0;border-radius:0;padding:0;min-width:0}.light{background:#eadcc4}.dark{background:#9b704c}.square .piece{font-family:"DejaVu Sans","Segoe UI Symbol",serif;font-size:clamp(24px,5.4vw,58px);line-height:1;filter:drop-shadow(0 2px 1px #0003);user-select:none}.white-piece{color:#fffdf5;text-shadow:0 1px 2px #282828,1px 1px 0 #282828,-1px -1px 0 #282828}.black-piece{color:#171717;text-shadow:0 1px 1px #fff7}.square.selected:after{content:"";position:absolute;inset:0;background:#f5c84288;pointer-events:none}.square.target:before{content:"";position:absolute;width:23%;height:23%;border-radius:50%;background:#1d693d99;z-index:1}.square.capture:before{content:"";position:absolute;inset:5%;border:5px solid #1d693d99;border-radius:50%;z-index:1}.coord{position:absolute;font-size:10px;font-weight:800;left:4px;top:3px;color:#29231d99;z-index:2;pointer-events:none}.square .piece{z-index:1}.side-panel{display:flex;flex-direction:column;gap:16px}.status-card{background:var(--site-secondary);color:var(--site-on-secondary);border-radius:18px;padding:20px}.status-card .status{font-family:var(--site-font-heading);font-size:25px;margin:8px 0}.muted{color:light-dark(#77716a,#aeb8c5);font-size:13px;line-height:1.6}.status-card .muted{color:#c1c8d1}.controls{display:grid;grid-template-columns:1fr 1fr;gap:9px}.history{max-height:310px;overflow:auto;border:1px solid light-dark(#e1dbd1,#2a394c);border-radius:14px;padding:14px}.history-row{display:grid;grid-template-columns:32px 1fr 1fr;gap:8px;padding:7px 3px;border-bottom:1px solid light-dark(#eee9e1,#2a394c);font-size:13px}.history-row:last-child{border:0}.history-row span:first-child{color:light-dark(#8b8379,#8d9bad)}.promotion{display:flex;gap:8px;flex-wrap:wrap}.promotion button{font-size:20px;min-width:48px}.hidden{display:none!important}.footer{margin:26px 0 4px;text-align:center;color:light-dark(#8b8379,#77869a);font-size:12px}.tag{display:inline-flex;padding:6px 9px;border-radius:30px;background:light-dark(#f1e8d9,#28384b);font-size:11px;font-weight:800;letter-spacing:.08em;color:light-dark(#73542e,#e0bd88)}
+@media(max-width:800px){.hero{grid-template-columns:1fr}.hero-art{min-height:240px}.game-layout{grid-template-columns:1fr}.side-panel{display:grid;grid-template-columns:1fr 1fr}.history-wrap{grid-column:1/-1}.game-panel{max-width:620px;margin:0 auto;width:100%}}
+@media(max-width:520px){#app{padding:16px}.topbar{margin-bottom:16px}.setup{grid-template-columns:1fr}.side-panel{display:flex}.hero-art{min-height:190px}.square .piece{font-size:clamp(22px,8vw,40px)}.playerbar{font-size:11px}}
+</style></head>
+<body><main id="app"><div class="shell">
+<header class="topbar"><div class="brand"><div class="brand-mark">♞</div><div><div>CHESS MASTER</div><div class="eyebrow">The royal game</div></div></div><div class="tag">PLAY • THINK • WIN</div></header>
+<section id="menu">
+ <div class="hero"><div class="panel"><div class="eyebrow">A classic, reimagined</div><h1>Make your<br>next move.</h1><p>A clean, focused chess experience. Challenge the computer, play a friend on the same device, and sharpen your strategy one move at a time.</p><div class="hero-actions"><button class="primary" id="playComputer">Play vs computer&nbsp; ↗</button><button class="secondary" id="playLocal">Two players</button></div></div><div class="panel hero-art"><div class="king-art">♚</div><div class="art-caption"><span>Est. 1475</span><span>64 squares · Infinite possibilities</span></div></div></div>
+ <div class="setup"><div class="setup-card"><div class="eyebrow">01 / Opponent</div><h3>Choose your match</h3><p>Play against a computer opponent or pass the device and play face to face.</p><div class="choice-row"><button class="choice active" data-mode="computer">Computer</button><button class="choice" data-mode="local">Local 2-player</button></div></div><div class="setup-card"><div class="eyebrow">02 / Challenge</div><h3>Set the difficulty</h3><p>Choose how tough the computer should play. You can change this before starting a match.</p><div class="choice-row"><button class="choice" data-level="Easy">Easy</button><button class="choice active" data-level="Medium">Medium</button><button class="choice" data-level="Hard">Hard</button></div></div></div>
+ <div class="setup-card" style="margin-top:18px;display:flex;align-items:center;justify-content:space-between;gap:18px;flex-wrap:wrap"><div><div class="eyebrow">03 / Competitive</div><h3 style="margin:6px 0">Ranked mode</h3><p style="margin:0">Play a rated match against the computer on Hard difficulty. Wins earn points, losses lose points, and draws don't change your rating.</p><div style="margin-top:12px;font-weight:800" id="rankSummary">Bronze III · 1000 rating · 0W–0L–0D</div></div><button class="primary" id="playRanked">Play ranked&nbsp; ↗</button></div>
+</section>
+<section class="setup-card" id="onlinePanel" style="margin-top:18px"><div class="eyebrow">04 / Play online</div><h3>Play with anyone</h3><p>Create a private lobby and share its code, or join a friend's lobby. Online games use the same chessboard.</p><div class="hero-actions"><button class="primary" id="createLobby">Create lobby</button><input id="lobbyCode" aria-label="Lobby code" maxlength="6" placeholder="ENTER CODE" style="width:150px;padding:12px;border-radius:10px;border:1px solid #9a9a9a;text-transform:uppercase"><button class="secondary" id="joinLobby">Join lobby</button></div><div style="border-top:1px solid light-dark(#e1dbd1,#2a394c);margin-top:18px;padding-top:16px"><div class="eyebrow">Ranked online</div><p>Find an opponent near your rating. Wins add 25 points; losses remove 20; draws do not change your rating.</p><div class="hero-actions" style="margin-top:10px"><button class="secondary" id="findRanked">Find ranked match</button><button class="ghost hidden" id="cancelRanked">Cancel search</button></div></div><p id="onlineMessage" class="muted" aria-live="polite">Connecting to online play…</p><div id="lobbyCodeDisplay" class="tag hidden" style="margin-top:10px;font-size:18px;letter-spacing:.18em"></div></section>
+<section id="game" class="hidden"><div class="game-layout"><div class="panel game-panel"><div class="playerbar"><span class="player-name" id="blackName">♟ Black · Computer</span><span id="blackClock">YOUR OPPONENT</span></div><div class="board" id="board" aria-label="Chess board"></div><div class="playerbar"><span class="player-name">♙ White · You</span><span id="whiteClock">YOUR SIDE</span></div></div><aside class="side-panel"><div class="status-card"><div class="eyebrow">CURRENT MATCH</div><div class="status" id="status">White to move</div><div class="muted" id="substatus">Select a piece, then its destination square.</div></div><div class="panel"><div class="eyebrow">GAME CONTROLS</div><div class="controls" style="margin-top:14px"><button class="ghost" id="undo">↶ Undo</button><button class="ghost" id="restart">⟳ Restart</button><button class="ghost" id="flip">⇅ Flip board</button><button class="ghost" id="backMenu">⌂ Menu</button></div><div id="promotionBox" class="hidden" style="margin-top:16px"><div class="eyebrow">PROMOTE PAWN</div><div class="promotion" id="promotionChoices" style="margin-top:8px"></div></div></div><div class="panel history-wrap"><div class="eyebrow">MOVE HISTORY</div><div class="history" id="history" style="margin-top:12px"><div class="muted">Your moves will appear here.</div></div></div></aside></div></section>
+<div class="footer">CHESS MASTER · A complete classic chess experience</div></div></main>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script>
+(() => {
+'use strict';
+const GLYPH={K:'♔',Q:'♕',R:'♖',B:'♗',N:'♘',P:'♙',k:'♚',q:'♛',r:'♜',b:'♝',n:'♞',p:'♟'};
+const DIR={n:[-33,-31,-18,-14,14,18,31,33],b:[-17,-15,15,17],r:[-16,-1,1,16],k:[-17,-16,-15,-1,1,15,16,17]};
+const on=i=>i>=0&&i<128&&!(i&0x88), side=p=>!p||p==='.'?0:p===p.toUpperCase()?1:-1;
+const sq=i=>'abcdefgh'[i&7]+(8-(i>>4)), key=m=>sq(m[0])+sq(m[1])+m[2];
+function initial(){return parseFen('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');}
+function parseFen(fen){const f=fen.split(/\s+/),b=Array(128).fill('.');f[0].split('/').forEach((row,r)=>{let c=0;for(const p of row){if(/[1-8]/.test(p))c+=+p;else b[r*16+c++]=p;}});return{b,t:f[1]==='w'?1:-1,c:(f[2].includes('K')?1:0)|(f[2].includes('Q')?2:0)|(f[2].includes('k')?4:0)|(f[2].includes('q')?8:0),ep:f[3]==='-'?-1:(8-Number(f[3][1]))*16+'abcdefgh'.indexOf(f[3][0]),half:+f[4],full:+f[5]};}
+function attacked(s,target,by){for(let f=0;f<128;f++){if(!on(f)||side(s.b[f])!==by)continue;const p=s.b[f].toLowerCase();if(p==='p'){if(target===f-16*by-1||target===f-16*by+1)return true;continue;}for(const d of DIR[p]||DIR.k){for(let t=f+d;on(t);t+=d){if(t===target)return true;if(s.b[t]!=='.'||p==='n'||p==='k')break;}}}return false;}
+const checked=(s,color=s.t)=>attacked(s,s.b.indexOf(color===1?'K':'k'),-color);
+function apply(s,m){const[f,t,promo,flag]=m,b=s.b.slice(),piece=b[f],captured=b[t];let c=s.c;b[f]='.';b[t]=promo?(s.t===1?promo.toUpperCase():promo):piece;if(flag==='ep')b[t+16*s.t]='.';if(flag==='castle'){const rf=t>f?f+3:f-4,rt=t>f?f+1:f-1;b[rt]=b[rf];b[rf]='.';}if(piece==='K')c&=~3;if(piece==='k')c&=~12;const rb={119:1,112:2,7:4,0:8};if(piece.toLowerCase()==='r')c&=~(rb[f]||0);if(captured.toLowerCase()==='r')c&=~(rb[t]||0);return{b,t:-s.t,c,ep:piece.toLowerCase()==='p'&&Math.abs(t-f)===32?(t+f)/2:-1,half:piece.toLowerCase()==='p'||captured!=='.'||flag==='ep'?0:s.half+1,full:s.full+(s.t===-1?1:0)};}
+function pseudo(s){const out=[];for(let f=0;f<128;f++){if(!on(f)||side(s.b[f])!==s.t)continue;const p=s.b[f].toLowerCase(),add=(t,flag='')=>{if(s.b[t].toLowerCase()==='k')return;if(p==='p'&&(t>>4===0||t>>4===7))for(const q of ['q','r','b','n'])out.push([f,t,q,flag]);else out.push([f,t,'',flag]);};if(p==='p'){const t=f-16*s.t;if(on(t)&&s.b[t]==='.'){add(t);const u=t-16*s.t;if((f>>4)===(s.t===1?6:1)&&s.b[u]==='.')add(u);}for(const d of [-1,1]){const u=t+d;if(!on(u))continue;if(side(s.b[u])===-s.t)add(u);else if(u===s.ep&&s.b[u]==='.'&&s.b[u+16*s.t]===(s.t===1?'p':'P'))add(u,'ep');}}else{for(const d of DIR[p]||DIR.k)for(let t=f+d;on(t);t+=d){if(side(s.b[t])===s.t)break;add(t);if(s.b[t]!=='.'||p==='n'||p==='k')break;}const home=s.t===1?116:4,rook=s.t===1?'R':'r',bits=s.t===1?[1,2]:[4,8];if(p==='k'&&f===home&&!checked(s)){if((s.c&bits[0])&&s.b[f+3]===rook&&s.b[f+1]==='.'&&s.b[f+2]==='.'&&!attacked(s,f+1,-s.t)&&!attacked(s,f+2,-s.t))add(f+2,'castle');if((s.c&bits[1])&&s.b[f-4]===rook&&s.b[f-1]==='.'&&s.b[f-2]==='.'&&s.b[f-3]==='.'&&!attacked(s,f-1,-s.t)&&!attacked(s,f-2,-s.t))add(f-2,'castle');}}}return out;}
+const legal=s=>pseudo(s).filter(m=>!checked(apply(s,m),s.t));
+function san(s,m){const[f,t,promo,flag]=m,p=s.b[f].toUpperCase(),capture=s.b[t]!=='.'||flag==='ep';let z='';if(flag==='castle')z=t>f?'O-O':'O-O-O';else{if(p!=='P'){z=p;const others=legal(s).filter(x=>x[0]!==f&&x[1]===t&&s.b[x[0]]===s.b[f]);if(others.length)z+=!others.some(x=>(x[0]&7)===(f&7))?sq(f)[0]:!others.some(x=>(x[0]>>4)===(f>>4))?sq(f)[1]:sq(f);}else if(capture)z=sq(f)[0];z+=(capture?'x':'')+sq(t)+(promo?'='+promo.toUpperCase():'');}const n=apply(s,m);return z+(checked(n)?legal(n).length?'+':'#':'');}
+function insufficient(s){const pieces=[];for(let i=0;i<128;i++)if(on(i)&&s.b[i]!=='.'&&s.b[i].toLowerCase()!=='k')pieces.push([s.b[i].toLowerCase(),((i>>4)+(i&7))%2]);return pieces.length===0||(pieces.length===1&&['b','n'].includes(pieces[0][0]))||(pieces.every(p=>p[0]==='b')&&new Set(pieces.map(p=>p[1])).size===1);}
+function posKey(s){return s.b.join('')+':'+s.t+':'+s.c+':'+(s.ep>=0&&legal(s).some(m=>m[3]==='ep')?s.ep:-1);}
+function gameStatus(history){const s=history.at(-1),moves=legal(s),check=checked(s),rep=history.filter(x=>posKey(x)===posKey(s)).length;if(!moves.length)return{done:true,text:check?'Checkmate — '+(s.t===1?'Black':'White')+' wins!':'Draw — stalemate.'};if(insufficient(s))return{done:true,text:'Draw — insufficient material.'};if(s.half>=150)return{done:true,text:'Draw — 75-move rule.'};if(rep>=5)return{done:true,text:'Draw — fivefold repetition.'};return{done:false,text:(s.t===1?'White':'Black')+' to move'+(check?' · Check!':'')};}
+const VAL={p:100,n:320,b:330,r:500,q:900,k:0};
+function evaluate(s){let score=0;for(let i=0;i<128;i++)if(on(i)&&s.b[i]!=='.'){const p=s.b[i];score+=(p===p.toUpperCase()?1:-1)*VAL[p.toLowerCase()];}return score;}
+function aiMove(s,level){const moves=legal(s);if(!moves.length)return null;if(level==='Easy')return moves[Math.floor(Math.random()*moves.length)];let best=-Infinity,choice=moves[0];for(const m of moves){const n=apply(s,m),replies=legal(n);let score=-evaluate(n);if(!replies.length&&checked(n))score+=100000;if(level==='Hard'&&replies.length){let worst=Infinity;for(const r of replies){const a=apply(n,r);let val=-evaluate(a);if(!legal(a).length&&checked(a))val-=100000;worst=Math.min(worst,val);}score=worst;}score+=Math.random()*4;if(score>best){best=score;choice=m;}}return choice;}
+let mode='computer',level='Medium',history=[initial()],moves=[],selected=-1,pending=null,flipped=false,thinking=false,onlineRoom=false,onlineColor=0;
+const $=id=>document.getElementById(id), menu=$('menu'),game=$('game'),board=$('board');
+function startGame(m){mode=m;history=[initial()];moves=[];selected=-1;pending=null;flipped=false;thinking=false;$('blackName').textContent=mode==='computer'?'♟ Black · Computer':'♟ Black · Player 2';menu.classList.add('hidden');game.classList.remove('hidden');render();}
+function render(){const s=history.at(-1),st=gameStatus(history),ended=st.done;board.innerHTML='';const legalMoves=legal(s),targets=selected<0?[]:legalMoves.filter(m=>m[0]===selected).map(m=>m[1]);for(let row=0;row<8;row++)for(let col=0;col<8;col++){const rank=flipped?row:7-row,file=flipped?7-col:col,i=rank*16+file,btn=document.createElement('button');btn.className='square '+(((rank+file)%2===0)?'light':'dark');btn.setAttribute('aria-label',sq(i)+(s.b[i]==='.'?' empty':' '+s.b[i]));if(selected===i)btn.classList.add('selected');if(targets.includes(i))btn.classList.add(s.b[i]==='.'?'target':'capture');if(s.b[i]!=='.'){const piece=document.createElement('span');piece.className='piece '+(side(s.b[i])===1?'white-piece':'black-piece');piece.textContent=GLYPH[s.b[i]];btn.append(piece);}if(file===0||rank===0){const c=document.createElement('span');c.className='coord';c.textContent=file===0?String(8-rank):'abcdefgh'[file];btn.append(c);}btn.addEventListener('click',()=>clickSquare(i));board.append(btn);}
+$('status').textContent=st.text;$('substatus').textContent=ended?'This game is finished. Start a new game to play again.':thinking?'Computer is thinking…':mode==='computer'&&s.t===-1?'Computer is choosing a move.':'Select one of your pieces, then a highlighted square.';$('whiteClock').textContent=s.t===1?'TO MOVE':'WAITING';$('blackClock').textContent=s.t===-1?'TO MOVE':'WAITING';$('undo').disabled=moves.length===0;$('undo').style.opacity=moves.length===0?'.45':'1';renderHistory();renderPromotion();}
+function renderHistory(){const box=$('history');box.innerHTML='';if(!moves.length){box.innerHTML='<div class="muted">Your moves will appear here.</div>';return;}for(let i=0;i<moves.length;i+=2){const row=document.createElement('div');row.className='history-row';for(const val of [String(i/2+1)+'.',moves[i],moves[i+1]||'—']){const span=document.createElement('span');span.textContent=val;row.append(span);}box.append(row);}box.scrollTop=box.scrollHeight;}
+function renderPromotion(){const box=$('promotionBox'),choices=$('promotionChoices');choices.innerHTML='';if(!pending){box.classList.add('hidden');return;}box.classList.remove('hidden');for(const m of pending){const b=document.createElement('button');b.className='ghost';b.textContent=GLYPH[m[2].toUpperCase()];b.title={q:'Queen',r:'Rook',b:'Bishop',n:'Knight'}[m[2]];b.addEventListener('click',()=>play(m));choices.append(b);}}
+function commit(m){if(mode==='online'){window.chessOnlineMove?.(m);return;}const s=history.at(-1),notation=san(s,m),next=apply(s,m);history.push(next);moves.push(notation);selected=-1;pending=null;render();if(mode==='computer'&&next.t===-1&&!gameStatus(history).done){thinking=true;render();window.setTimeout(()=>{const reply=aiMove(history.at(-1),level);thinking=false;if(reply){moves.push(san(history.at(-1),reply));history.push(apply(history.at(-1),reply));}render();},260);}}
+function play(m){if(thinking||gameStatus(history).done)return;const m2=legal(history.at(-1)).find(x=>key(x)===key(m));if(m2)commit(m2);}
+function clickSquare(i){if(thinking||pending||gameStatus(history).done)return;const s=history.at(-1);if((mode==='computer'&&s.t===-1)||(mode==='online'&&s.t!==onlineColor))return;if(side(s.b[i])===s.t){selected=selected===i?-1:i;render();return;}const options=legal(s).filter(m=>m[0]===selected&&m[1]===i);if(options.length>1){pending=options;renderPromotion();return;}if(options.length===1){play(options[0]);return;}selected=-1;render();}
+window.chessOnlineStart=color=>{onlineColor=color;onlineRoom=true;mode='online';history=[initial()];moves=[];selected=-1;pending=null;flipped=color===-1;thinking=false;$('blackName').textContent=color===1?'♟ Black · Opponent':'♟ Black · You';$('whiteClock').textContent=color===1?'YOUR SIDE':'OPPONENT';$('blackClock').textContent=color===-1?'YOUR SIDE':'OPPONENT';menu.classList.add('hidden');game.classList.remove('hidden');render();};
+window.chessOnlineSync=arr=>{if(!onlineRoom||!Array.isArray(arr))return;while(moves.length<arr.length){const encoded=arr[moves.length],m=legal(history.at(-1)).find(x=>key(x)===encoded);if(!m){$('substatus').textContent='Could not sync an online move.';return;}moves.push(san(history.at(-1),m));history.push(apply(history.at(-1),m));}render();const result=$('status').textContent;if(/Checkmate|Draw/.test(result)&&window.onlineFinishCheck)window.onlineFinishCheck(/Draw/.test(result)?'draw':/White wins/.test(result)?'white':'black');};
+window.chessOnlineMove=async m=>{if(!window.onlineSupabaseRoom)return;const {error}=await window.onlineSupabase.rpc('submit_chess_move',{p_room_id:window.onlineSupabaseRoom,p_move:key(m)});if(error)$('substatus').textContent=error.message;};
+function undo(){if(!moves.length||thinking)return;const count=mode==='computer'?Math.min(2,moves.length):1;moves.splice(-count,count);history.splice(-count,count);selected=-1;pending=null;render();}
+$('playComputer').addEventListener('click',()=>startGame('computer'));$('playLocal').addEventListener('click',()=>startGame('local'));document.querySelectorAll('[data-mode]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-mode]').forEach(x=>x.classList.toggle('active',x===b));mode=b.dataset.mode;}));document.querySelectorAll('[data-level]').forEach(b=>b.addEventListener('click',()=>{document.querySelectorAll('[data-level]').forEach(x=>x.classList.toggle('active',x===b));level=b.dataset.level;}));$('undo').addEventListener('click',undo);$('restart').addEventListener('click',()=>{history=[initial()];moves=[];selected=-1;pending=null;thinking=false;render();});$('flip').addEventListener('click',()=>{flipped=!flipped;render();});$('backMenu').addEventListener('click',()=>{thinking=false;game.classList.add('hidden');menu.classList.remove('hidden');});
+})();
+</script><script>
+(() => {
+  const storeKey = 'chessMasterRankV1';
+  let stats;
+  try { stats = JSON.parse(localStorage.getItem(storeKey)) || {}; } catch { stats = {}; }
+  stats = { rating: Number.isFinite(stats.rating) ? stats.rating : 1000, wins: stats.wins || 0, losses: stats.losses || 0, draws: stats.draws || 0 };
+  let ranked = false, reported = false;
+  const summary = document.getElementById('rankSummary');
+  const tier = rating => rating >= 1800 ? 'Diamond' : rating >= 1600 ? 'Platinum' : rating >= 1400 ? 'Gold' : rating >= 1200 ? 'Silver' : 'Bronze';
+  const division = rating => rating >= 1800 ? 'I' : rating >= 1600 ? 'I' : rating >= 1400 ? 'I' : rating >= 1200 ? 'I' : rating >= 1100 ? 'II' : 'III';
+  function save() { localStorage.setItem(storeKey, JSON.stringify(stats)); summary.textContent = `${tier(stats.rating)} ${division(stats.rating)} · ${stats.rating} rating · ${stats.wins}W–${stats.losses}L–${stats.draws}D`; }
+  save();
+  document.getElementById('playRanked').addEventListener('click', () => {
+    ranked = true; reported = false;
+    document.querySelector('[data-level="Hard"]').click();
+    document.getElementById('playComputer').click();
+    document.getElementById('blackName').textContent = '♟ Black · Ranked CPU';
+    document.getElementById('substatus').textContent = 'RANKED MATCH · HARD CPU · WIN +25 / LOSS −20';
+  });
+  document.getElementById('backMenu').addEventListener('click', () => { ranked = false; });
+  const status = document.getElementById('status');
+  new MutationObserver(() => {
+    if (!ranked || reported) return;
+    const result = status.textContent;
+    if (!/Checkmate|Draw/.test(result)) return;
+    reported = true;
+    if (/Draw/.test(result)) { stats.draws++; }
+    else if (/White wins/.test(result)) { stats.wins++; stats.rating += 25; }
+    else if (/Black wins/.test(result)) { stats.losses++; stats.rating = Math.max(100, stats.rating - 20); }
+    save();
+    document.getElementById('substatus').textContent = `Ranked result recorded. Your rating is now ${stats.rating}.`;
+    ranked = false;
+  }).observe(status, { childList: true, characterData: true, subtree: true });
+})();
+</script><script>
+(() => {
+  const URL = 'https://cbsvhlnerinjzkqdqpvt.supabase.co';
+  const KEY = 'sb_publishable_UNw6rWkQCpGlEa9_YlakNg_pjY3GFTt';
+  const msg = document.getElementById('onlineMessage');
+  const codeBox = document.getElementById('lobbyCodeDisplay');
+  if (!window.supabase?.createClient) { msg.textContent = 'Online service could not load. Refresh and try again.'; return; }
+  const client = window.supabase.createClient(URL, KEY);
+  window.onlineSupabase = client;
+  let channel, rankedTimer = null, rankedSearching = false, resultSubmitted = false;
+  window.onlineFinishCheck = async result => {
+    if (!window.onlineRankedMatch || resultSubmitted || !window.onlineSupabaseRoom) return;
+    resultSubmitted = true;
+    const { data, error } = await client.rpc('confirm_ranked_result', { p_room_id: window.onlineSupabaseRoom, p_result: result });
+    if (error) { msg.textContent = 'Could not submit ranked result: ' + error.message; return; }
+    const response = Array.isArray(data) ? data[0] : data;
+    msg.textContent = response?.finished ? 'Ranked result confirmed. Ratings updated!' : 'Result submitted. Waiting for the other player to confirm.';
+  };
+  async function ready() {
+    const { data: sessionData } = await client.auth.getSession();
+    if (!sessionData.session) {
+      const { error } = await client.auth.signInAnonymously();
+      if (error) throw error;
+    }
+  }
+  function watchRoom(roomId, color) {
+    window.onlineSupabaseRoom = roomId;
+    if (channel) client.removeChannel(channel);
+    channel = client.channel('chess-room-' + roomId).on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'chess_rooms', filter: 'id=eq.' + roomId }, payload => {
+      const room = payload.new;
+      if (room.status === 'playing' && !window.onlineGameStarted) { window.onlineGameStarted = true; window.chessOnlineStart(color); }
+      window.chessOnlineSync(room.moves || []);
+    }).subscribe();
+  }
+  async function tryRankedMatch() {
+    const { data, error } = await client.rpc('find_ranked_match');
+    if (error) throw error;
+    const match = Array.isArray(data) ? data[0] : data;
+    if (!match?.matched) { msg.textContent = 'Searching for a ranked opponent…'; return false; }
+    rankedSearching = false;
+    if (rankedTimer) clearInterval(rankedTimer);
+    rankedTimer = null;
+    document.getElementById('cancelRanked').classList.add('hidden');
+    msg.textContent = 'Ranked opponent found! Starting game…';
+    window.onlineGameStarted = true;
+    window.onlineRankedMatch = true;
+    resultSubmitted = false;
+    watchRoom(match.room_id, match.color === 'black' ? -1 : 1);
+    window.chessOnlineStart(match.color === 'black' ? -1 : 1);
+    return true;
+  }
+  document.getElementById('findRanked').addEventListener('click', async () => {
+    try {
+      await ready();
+      rankedSearching = true;
+      document.getElementById('findRanked').classList.add('hidden');
+      document.getElementById('cancelRanked').classList.remove('hidden');
+      msg.textContent = 'Searching for a ranked opponent…';
+      if (await tryRankedMatch()) return;
+      rankedTimer = setInterval(async () => {
+        if (!rankedSearching) return;
+        try { await tryRankedMatch(); } catch (e) { msg.textContent = e.message || 'Ranked search failed.'; }
+      }, 3000);
+    } catch (e) { rankedSearching = false; msg.textContent = e.message || 'Could not start ranked search.'; }
+  });
+  document.getElementById('cancelRanked').addEventListener('click', async () => {
+    rankedSearching = false;
+    if (rankedTimer) clearInterval(rankedTimer);
+    rankedTimer = null;
+    try { await ready(); await client.rpc('cancel_ranked_search'); } catch {}
+    document.getElementById('cancelRanked').classList.add('hidden');
+    document.getElementById('findRanked').classList.remove('hidden');
+    msg.textContent = 'Ranked search cancelled.';
+  });
+  document.getElementById('createLobby').addEventListener('click', async () => {
+    msg.textContent = 'Creating your lobby…';
+    try {
+      await ready();
+      const { data, error } = await client.rpc('create_chess_room');
+      if (error) throw error;
+      const room = Array.isArray(data) ? data[0] : data;
+      const id = room.room_id || room.id;
+      const code = room.lobby_code || room.code;
+      if (!id || !code) throw new Error('The lobby response was incomplete.');
+      codeBox.textContent = 'LOBBY CODE: ' + code; codeBox.classList.remove('hidden');
+      msg.textContent = 'Waiting for someone to join. Share this code with them.';
+      window.onlineGameStarted = false;
+      window.onlineRankedMatch = false;
+      watchRoom(id, 1);
+    } catch (e) { msg.textContent = e.message || 'Could not create lobby.'; }
+  });
+  document.getElementById('joinLobby').addEventListener('click', async () => {
+    const code = document.getElementById('lobbyCode').value.trim().toUpperCase();
+    if (!code) { msg.textContent = 'Enter a lobby code first.'; return; }
+    msg.textContent = 'Joining lobby…';
+    try {
+      await ready();
+      const { data, error } = await client.rpc('join_chess_room', { p_code: code });
+      if (error) throw error;
+      const room = Array.isArray(data) ? data[0] : data;
+      const id = room.room_id || room.id;
+      if (!id) throw new Error('The lobby response was incomplete.');
+      window.onlineGameStarted = true;
+      window.onlineRankedMatch = false;
+      watchRoom(id, -1);
+      window.chessOnlineStart(-1);
+      window.chessOnlineSync(room.moves || []);
+      msg.textContent = 'Joined! You are playing Black.';
+    } catch (e) { msg.textContent = e.message || 'Could not join lobby.'; }
+  });
+  ready().then(() => { msg.textContent = 'Online play is connected. Create a lobby or enter a code.'; }).catch(e => { msg.textContent = 'Online sign-in failed: ' + (e.message || 'Check Supabase anonymous sign-ins.'); });
+})();
+</script></body></html>
